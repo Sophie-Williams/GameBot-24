@@ -6,7 +6,7 @@
  * Have a nice day.
  */
 
-//setup
+//Load dependencies and setup some variables
 const Discord = require('discord.js');
 const config = require("./config.json");
 const fs = require('fs');
@@ -16,22 +16,40 @@ const client = new Discord.Client();
 let prefix = config.prefix;
 var secret = 0;
 
-//Secret generation for things.
+//Secret generation for really dangerous things
 function generateSecret()
 {
 	secret = Math.floor((Math.random() * 1000000000) + 10000000);
 }
 
-//Database functions that might work?
+//JSON thingies to make DB stuff easier
+function blackmagic(json) {	return JSON.parse(json); }
+function search(user) { return JSON.parse("{ \"uid\": \"" + user + "\"}"); }
+function change(key, value) { return JSON.parse("{ \"" + key + "\": \"" + value + "\" }"); }
+hp = "hp";
+xp = "xp";
+lvl = "lvl";
+gold = "gold";
+
+//Database functions that kinda work?
+function addUser(uid)
+{
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		db.collection("users").insertOne(blackmagic("{ \"uid\": \"" + uid + "\", \"hp\": 0, \"xp\": 0, \"lvl\": 0, \"gold\": 0 }"), function(err, res) {
+			if (err) throw err;
+			db.close();
+		});
+	});
+}
+
 function getUserData(userid)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		q = "{ \"uid\": \"" + userid + "\" }";
-		var query = JSON.parse(q);
-		db.collection("users").find(query).toArray(function(err, result) {
+		db.collection("users").find(blackmagic("{ \"uid\": \"" + userid + "\" }")).toArray(function(err, result) {
 			if (err) throw err;
-			if(result[0] == undefined) console.log("User " + userid + "does not exist.");
+			if(result[0] == undefined) console.log("User " + userid + "does not exist."); //Make sure user exists before trying to print data.
 			else console.log(result[0]);
 			return(result[0]);
 			db.close();
@@ -43,11 +61,8 @@ function changeUserHP(uid, nhp)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		userquery = { id: uid };
-		update = { hp: nhp };
-		db.collection("users").updateOne(userquery, update, function(err, res) {
+		db.collection("users").updateOne(search(uid), change(hp, nhp), function(err, res) {
 			if (err) throw err;
-			console.log("Changed ${uid}'s HP to ${nhp}.");
 			db.close();
 		});
 	});
@@ -57,23 +72,7 @@ function changeUserXP(uid, nxp)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		userquery = { id: uid };
-		update = { xp: nxp };
-		db.collection("users").updateOne(userquery, update, function(err, res) {
-			if (err) throw err;
-			console.log("Changed ${uid}'s XP to ${nxp}.");
-			db.close();
-		});
-	});
-}
-
-function addUser(uid)
-{
-	MongoClient.connect(url, function(err, db) {
-		if (err) throw err;
-		var userdata1 = "{ \"uid\": \"" + uid + "\", \"hp\": 0, \"xp\": 0, \"lvl\": 0, \"gold\": 0 }";
-		var userdata = JSON.parse(userdata1);
-		db.collection("users").insertOne(userdata, function(err, res) {
+		db.collection("users").updateOne(search(uid), change(xp, nxp), function(err, res) {
 			if (err) throw err;
 			db.close();
 		});
@@ -84,11 +83,8 @@ function changeUserLevel(uid, nlvl)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		userquery = { id: uid };
-		update = { lvl: nlvl };
-		db.collection("users").updateOne(userquery, update, function(err, res) {
+		db.collection("users").updateOne(search(uid), change(lvl, nlvl), function(err, res) {
 			if (err) throw err;
-			console.log("Changed ${uid}'s level to ${nlvl}.");
 			db.close();
 		});
 	});
@@ -98,11 +94,8 @@ function changeUserGold(uid, ngold)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		userquery = { id: uid };
-		update = { gold: ngold };
-		db.collection("users").updateOne(userquery, update, function(err, res) {
+		db.collection("users").updateOne(search(uid), change(gold, ngold), function(err, res) {
 			if (err) throw err;
-			console.log("Changed ${uid}'s gold to ${ngold}.");
 			db.close();
 		});
 	});

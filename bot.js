@@ -5,15 +5,23 @@
  * It is most likely unstable and should NOT BE USED.
  * Have a nice day.
  */
- 
-const Discord = require('discord.js');
-const client = new Discord.Client();
-const config = require("./config.json");
-const fs = require('fs')
-const MongoClient = require('mongodb').MongoClient;
-const url = config.dburl;
 
-//Database functions
+//setup
+try {
+	const Discord = require('discord.js');
+	const client = new Discord.Client();
+	const config = require("./config.json");
+	const fs = require('fs');
+	const MongoClient = require('mongodb').MongoClient;
+	const url = config.dburl;
+}
+catch(e)
+{
+	console.log("oh noes! there has been an error during setup.");
+	console.log(e);
+}
+
+//Database functions that might work?
 function getUserData(uid)
 {
 	MongoClient.connect(url, function(err, db) {
@@ -96,10 +104,12 @@ function changeUserGold(uid, ngold)
 	}); 
 }
 
+//when the bot does a start do morning things
 client.on("ready", () => {
 	console.log("GameBot started.");
 });
 
+//ooh new message
 client.on("message", (message) => {
 	//Get the args
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -114,6 +124,11 @@ client.on("message", (message) => {
 		message.channel.sendMessage("YO WASSUP");
 	}
 	
+	if(command == "testAddUser")
+	{
+		client.emit("guildMemberAdd", args[0]); //pretend to add a user
+		message.channel.sendMessage(getUserData(args[0])); //send user data for the fake user
+	}
 });
 
 //Run when someone joins
@@ -123,7 +138,7 @@ client.on("guildMemberAdd", (member) => {
   addUser(member.user.id);
 });
 
-//Error printing
+//Error printing and stuff
 client.on("error", (e) => console.error(e));
 client.on("warn", (e) => console.warn(e));
 

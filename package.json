@@ -1,0 +1,36 @@
+{
+  "name": "GameBot",
+  "version": "0.0.0",
+  "description": "Discord bot with a game. WARNING: This app is in a *very* early alpha stage. It is most likely unstable and should NOT BE USED. I am not responsible for any issues caused by use of this bot. Have a nice day.",
+  "main": "bot.js",
+  "dependencies": {
+    "bufferutil": "^3.0.3",
+    "erlpack": "^0.1.2",
+    "libsodium-wrappers": "^0.5.4",
+    "long": "^3.2.0",
+    "mongodb": "^2.2.33",
+    "node-opus": "^0.2.7",
+    "opusscript": "^0.0.3",
+    "prism-media": "^0.0.2",
+    "snekfetch": "^3.5.8",
+    "sodium": "^2.0.3",
+    "tweetnacl": "^1.0.0",
+    "uws": "^0.14.5",
+    "ws": "^3.3.2",
+    "discord.js": "^11.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wipsdafox/GameBot.git"
+  },
+  "author": "wipsdafox",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wipsdafox/GameBot/issues"
+  },
+  "homepage": "https://github.com/wipsdafox/GameBot#readme"
+}

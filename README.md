@@ -12,3 +12,7 @@ Have a nice day.
 
 ## Known issues
 Bot will NOT work in guilds with 2500+ users. Also please don't use this on guilds you want a working bot on
+
+## Reporting issues
+When you report an issue, please enable `debug` in the config file and post a pastebin link to the text in your console.
+MAKE SURE YOU REMOVE YOUR TOKEN FROM THE LOGS!!!!

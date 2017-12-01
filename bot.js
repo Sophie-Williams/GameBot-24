@@ -1,25 +1,19 @@
 /*
  * GameBot
- * 
+ *
  * WARNING: This app is in a *very* early alpha stage.
  * It is most likely unstable and should NOT BE USED.
  * Have a nice day.
  */
 
 //setup
-try {
-	const Discord = require('discord.js');
-	const client = new Discord.Client();
-	const config = require("./config.json");
-	const fs = require('fs');
-	const MongoClient = require('mongodb').MongoClient;
-	const url = config.dburl;
-}
-catch(e)
-{
-	console.log("oh noes! there has been an error during setup.");
-	console.log(e);
-}
+const Discord = require('discord.js');
+const config = require("./config.json");
+const fs = require('fs');
+const MongoClient = require('mongodb').MongoClient;
+const url = config.dburl;
+const client = new Discord.Client();
+let prefix = config.prefix;
 
 //Database functions that might work?
 function getUserData(uid)
@@ -32,7 +26,7 @@ function getUserData(uid)
 			return(result);
 			db.close();
 		});
-	}); 
+	});
 }
 
 function changeUserHP(uid, nhp)
@@ -46,7 +40,7 @@ function changeUserHP(uid, nhp)
 			console.log("Changed ${uid}'s HP to ${nhp}.");
 			db.close();
 		});
-	}); 
+	});
 }
 
 function changeUserXP(uid, nxp)
@@ -60,7 +54,7 @@ function changeUserXP(uid, nxp)
 			console.log("Changed ${uid}'s XP to ${nxp}.");
 			db.close();
 		});
-	}); 
+	});
 }
 
 function addUser(uid)
@@ -73,7 +67,7 @@ function addUser(uid)
 			console.log("Added User ID ${uid} to users.");
 			db.close();
 		});
-	}); 
+	});
 }
 
 function changeUserLevel(uid, nlvl)
@@ -87,7 +81,7 @@ function changeUserLevel(uid, nlvl)
 			console.log("Changed ${uid}'s HP to ${nlvl}.");
 			db.close();
 		});
-	}); 
+	});
 }
 
 function changeUserGold(uid, ngold)
@@ -101,7 +95,7 @@ function changeUserGold(uid, ngold)
 			console.log("Changed ${uid}'s HP to ${ngold}.");
 			db.close();
 		});
-	}); 
+	});
 }
 
 //when the bot does a start do morning things
@@ -114,20 +108,20 @@ client.on("message", (message) => {
 	//Get the args
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();
-	
+
 	//Get user data from database
 	var user = getUserData(message.author.id);
-	
+
 	//Commands
 	if(command === "ping")
 	{
-		message.channel.sendMessage("YO WASSUP");
+		message.channel.send("YO WASSUP");
 	}
-	
+
 	if(command == "testAddUser")
 	{
 		client.emit("guildMemberAdd", args[0]); //pretend to add a user
-		message.channel.sendMessage(getUserData(args[0])); //send user data for the fake user
+		message.channel.send(getUserData(args[0])); //send user data for the fake user
 	}
 });
 
@@ -141,7 +135,6 @@ client.on("guildMemberAdd", (member) => {
 //Error printing and stuff
 client.on("error", (e) => console.error(e));
 client.on("warn", (e) => console.warn(e));
-
 if(config.debug == 1) client.on("debug", (e) => console.info(e));
 
 client.login(config.token);

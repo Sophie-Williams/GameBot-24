@@ -1,5 +1,6 @@
 {
   "token": "insert-bot-token-here",
   "prefix": "!",
-  "dburl": "mongodb://localhost:27017/mydb"
+  "dburl": "mongodb://localhost:27017/mydb",
+  "debug": 0
 }

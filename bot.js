@@ -28,7 +28,7 @@ function addUser(userid)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		user = { _id: `${userid}`, uid: `${userid}`, hp: 0, xp: 0, lvl: 0, gold: 0 }
+		user = { _id: `${userid}`, uid: `${userid}`, hp: 0, xp: 0, lvl: 0, gold: 0, storypos: 0 };
 		db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
 			db.close();
@@ -224,7 +224,7 @@ client.on("message", (message) => {
 //Run when someone joins
 client.on("guildMemberAdd", (member) => {
   console.log(`New user "${member.user.username}" has joined "${member.guild.name}"` );
-  member.guild.channels.get("welcome").send(`"Welcome, ${member.user.username}!"`);
+  member.guild.channels.get("welcome").send(`Welcome, ${member.user.username}!`);
 });
 
 //Error printing and stuff

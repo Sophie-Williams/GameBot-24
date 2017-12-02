@@ -7,7 +7,7 @@ Have a nice day.
 
 ## Setup
 1. Install MongoDB from mongodb.com
-2. Use `pip` to install `discord.js`, `mongodb` and `fs`
+2. Run `setup.sh`
 3. Update the values in `config.json` to match your desired settings.
 
 ## Known issues

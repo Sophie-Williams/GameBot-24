@@ -6,21 +6,25 @@
  * Have a nice day.
  */
 
-//Load dependencies and setup some variables
-const Discord = require('discord.js');
-const config = require("./config.json");
-const fs = require('fs');
-const MongoClient = require('mongodb').MongoClient;
-const url = config.dburl;
-const client = new Discord.Client();
-let prefix = config.prefix;
-var secret = 0;
-var version = "0.1a"
+//dependencies and stuff
+const Discord = require('discord.js'); //Discord
+const client = new Discord.Client(); //Discord
+const fs = require('fs'); //Filesystem
+const config = require("./config.json"); //Config
+const prefix = config.prefix; //Config
+const MongoClient = require('mongodb').MongoClient; //MongoDB
+const url = config.dburl; //MongoDB
+const async = require('async'); //Needed to prevent certain errors.
+var version = "0.1a" //Version message
+
+//Help message
+const helpmsg = "ping help";
 
 //Secret generation for really dangerous things
+var secret = 0;
 function generateSecret()
 {
-	secret = Math.floor((Math.random() * 1000000000) + 10000000);
+	secret = Math.floor((Math.random() * 1000000000) + 10000000); //Generate a random number.
 }
 
 //Database functions that kinda work?
@@ -28,7 +32,7 @@ function addUser(userid)
 {
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		user = { _id: `${userid}`, uid: `${userid}`, hp: 0, xp: 0, lvl: 0, gold: 0, storypos: 0 };
+		user = { uid: `${userid}`, hp: 0, xp: 0, lvl: 0, gold: 0, storypos: 0 };
 		db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
 			db.close();
@@ -58,7 +62,7 @@ function getUserData(userid)
 			if (err) throw err;
 			if(result[0] == undefined) console.log("User " + userid + " does not exist."); //Make sure user exists before trying to print data.
 			else console.log(result[0]);
-			return(result[0]);
+			return(result);
 			db.close();
 		});
 	});
@@ -123,9 +127,12 @@ client.on("ready", () => {
 
 //ooh new message
 client.on("message", (message) => {
+	if (!message.content.startsWith(prefix) || message.author.bot) return; //Check if actually a command
 	//Get the args
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();
+
+	var user; //Needed later.
 
 	//Commands
 	if(command === "ping")
@@ -133,7 +140,10 @@ client.on("message", (message) => {
 		message.channel.send("Pong!");
 	}
 
-	//User commands
+	else if(command === "help")
+	{
+		message.channel.send(helpmsg);
+	}
 
 	//Admin commands
 	else if(command === "adduser")
@@ -152,21 +162,31 @@ client.on("message", (message) => {
 			console.log(e);
 		}
 	}
+
 	else if(command === "getdata")
 	{
 		if(message.author.id != config.ownerid) return;
-		try
+
+		if(args[0] == undefined)
 		{
-			message.channel.send(`Will show all stored data for ${args[0]} in the logs.`);
-			udata = getUserData(args[0]);
+			getUserData(message.author.id);
 		}
-		catch (e)
+		else
 		{
-			message.channel.send("Error getting user data. Check the log for more info.");
-			console.log("Error getting user data.");
-			console.log(e);
+			try
+			{
+				message.channel.send(`Will show all stored data for ${args[0]} in the logs.`);
+				getUserData(args[0]);
+			}
+			catch (e)
+			{
+				message.channel.send("Error getting user data. Check the log for more info.");
+				console.log("Error getting user data.");
+				console.log(e);
+			}
 		}
 	}
+
 	else if(command === "wipeuserdata")
 	{
 		if(message.author.id != config.ownerid) return;
@@ -190,11 +210,13 @@ client.on("message", (message) => {
 	    			db.close();
 	  			});
 				});
+				secret = 0; //Reset secret
 			}
 			catch(e)
 			{
 				message.channel.send("Error while deleting user data. Check the log for more info.")
 				console.log(e);
+				secret = 0; //Reset secret
 			}
 			secret = 0;
 		}
@@ -204,6 +226,7 @@ client.on("message", (message) => {
 			generateSecret();
 		}
 	}
+
 	else if(command === "removeuser")
 	{
 		if(message.author.id != config.ownerid) return;

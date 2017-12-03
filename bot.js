@@ -19,12 +19,19 @@ var version = "0.1a" //Version message
 
 //Help message
 const helpmsg = "ping help";
+const adminhelpmsg = "USER COMMANDS: ping help ADMIN COMMANDS: adduser removeuser wipeuserdata hp xp lvl gold getdata";
 
 //Secret generation for really dangerous things
 var secret = 0;
 function generateSecret()
 {
 	secret = Math.floor((Math.random() * 1000000000) + 10000000); //Generate a random number.
+}
+
+//Make my life easier (and code cleaner)
+function getFirstMentionID(message)
+{
+	return message.mentions.members.first().id;
 }
 
 //Database functions that kinda work?
@@ -142,7 +149,8 @@ client.on("message", (message) => {
 
 	else if(command === "help")
 	{
-		message.channel.send(helpmsg);
+		if(message.author.id == config.ownerid) message.channel.send(adminhelpmsg);
+		else message.channel.send(helpmsg);
 	}
 
 	//Admin commands
@@ -152,7 +160,7 @@ client.on("message", (message) => {
 		console.log(`"Adding user: ${args[0]}`); //add user
 		try
 		{
-			addUser(args[0]);
+			addUser(getFirstMentionID(message));
 			message.channel.send(`Added user ${args[0]} to database.`);
 			console.log("Successfully added " + args[0]);
 		}
@@ -176,7 +184,7 @@ client.on("message", (message) => {
 			try
 			{
 				message.channel.send(`Will show all stored data for ${args[0]} in the logs.`);
-				getUserData(args[0]);
+				getUserData(getFirstMentionID(message));
 			}
 			catch (e)
 			{
@@ -233,7 +241,7 @@ client.on("message", (message) => {
 		try
 		{
 			message.channel.send(`Removing user ${args[0]} from database.`);
-			removeUser(args[0]);
+			removeUser(getFirstMentionID(message));
 			message.channel.send("User removed from database.");
 		}
 		catch(e)
@@ -248,7 +256,7 @@ client.on("message", (message) => {
 		if(message.author.id != config.ownerid) return;
 		if(args[0] == undefined) return;
 		if(args[1] == undefined) return;
-		changeUserHP(args[0], args[1]);
+		changeUserHP(getFirstMentionID(message), args[1]);
 	}
 
 	else if(command === "xp")
@@ -256,7 +264,7 @@ client.on("message", (message) => {
 		if(message.author.id != config.ownerid) return;
 		if(args[0] == undefined) return;
 		if(args[1] == undefined) return;
-		changeUserXP(args[0], args[1]);
+		changeUserXP(getFirstMentionID(message), args[1]);
 	}
 
 	else if(command === "lvl")
@@ -264,7 +272,7 @@ client.on("message", (message) => {
 		if(message.author.id != config.ownerid) return;
 		if(args[0] == undefined) return;
 		if(args[1] == undefined) return;
-		changeUserLevel(args[0], args[1]);
+		changeUserLevel(getFirstMentionID(message), args[1]);
 	}
 
 	else if(command === "gold")
@@ -272,7 +280,7 @@ client.on("message", (message) => {
 		if(message.author.id != config.ownerid) return;
 		if(args[0] == undefined) return;
 		if(args[1] == undefined) return;
-		changeUserGold(args[0], args[1]);
+		changeUserGold(getFirstMentionID(message), args[1]);
 	}
 
 });

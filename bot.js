@@ -6,7 +6,12 @@
  * Have a nice day.
  */
 
+console.log("\n===========================================");
+console.log("GameBot By wipsdafox (github.com/wipsdafox)")
+console.log("===========================================\n");
+
 //dependencies and stuff
+console.log("Setting variables...");
 const Discord = require('discord.js'); //Discord
 const client = new Discord.Client(); //Discord
 const fs = require('fs'); //Filesystem
@@ -21,6 +26,7 @@ var version = "0.1a" //Version message
 const helpmsg = "ping help";
 const adminhelpmsg = "USER COMMANDS: ping help ADMIN COMMANDS: adduser removeuser wipeuserdata hp xp lvl gold getdata";
 
+console.log("Good.");
 //Secret generation for really dangerous things
 var secret = 0;
 function generateSecret()
@@ -37,6 +43,7 @@ function getFirstMentionID(message)
 //Database functions that kinda work?
 function addUser(userid)
 {
+	console.log(`Adding user ${userid} to database.`)
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		user = { uid: `${userid}`, hp: 0, xp: 0, lvl: 0, gold: 0, storypos: 0 };
@@ -49,12 +56,12 @@ function addUser(userid)
 
 function removeUser(userid)
 {
+	console.log(`Removing user ${userid} from database.`)
 	MongoClient.connect(url, function(err, db) {
   if (err) throw err;
 	user = { uid: `${userid}`}
   	db.collection("users").deleteOne(user, function(err, obj) {
     	if (err) throw err;
-    	console.log("Removed user " + userid);
     	db.close();
   	});
 	});
@@ -62,13 +69,14 @@ function removeUser(userid)
 
 function getUserData(userid)
 {
+	console.log(`Getting data for ${userid}...`)
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		user = { uid: `${userid}` };
 		db.collection("users").find(user).toArray(function(err, result) {
 			if (err) throw err;
 			if(result[0] == undefined) console.log("User " + userid + " does not exist."); //Make sure user exists before trying to print data.
-			else console.log(result[0]);
+			else console.log(`Data found: ${result[0]}`);
 			return(result);
 			db.close();
 		});
@@ -77,6 +85,7 @@ function getUserData(userid)
 
 function changeUserHP(uid, nhp)
 {
+	console.log(`Changing ${uid}'s HP to ${nhp}...`);
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		q = { $set: { hp: `${nhp}` } };
@@ -90,6 +99,7 @@ function changeUserHP(uid, nhp)
 
 function changeUserXP(uid, nxp)
 {
+	console.log(`Changing ${uid}'s XP to ${nxp}...`);
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		q = { $set: { xp: `${nxp}` } };
@@ -103,6 +113,7 @@ function changeUserXP(uid, nxp)
 
 function changeUserLevel(uid, nlvl)
 {
+	console.log(`Changing ${uid}'s level to ${nlvl}...`);
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		q = { $set: { lvl: `${nlvl}` } };
@@ -116,6 +127,7 @@ function changeUserLevel(uid, nlvl)
 
 function changeUserGold(uid, ngold)
 {
+	console.log(`Changing ${uid}'s gold to ${ngold}...`);
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		q = { $set: { gold: `${ngold}` } };
@@ -135,6 +147,7 @@ client.on("ready", () => {
 //ooh new message
 client.on("message", (message) => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return; //Check if actually a command
+	if(config.logmessages == true) console.log(`${message.author.username} (ID ${message.author.id}) said ${message.content}.`);
 	//Get the args
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();

@@ -3,5 +3,6 @@
   "prefix": "!",
   "dburl": "mongodb://localhost:27017/mydb",
   "debug": 0,
-  "ownerid": ""
+  "ownerid": "",
+  "logmessages": false
 }

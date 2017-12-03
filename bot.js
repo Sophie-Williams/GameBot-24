@@ -242,6 +242,39 @@ client.on("message", (message) => {
 			console.log(e);
 		}
 	}
+
+	else if(command === "hp")
+	{
+		if(message.author.id != config.ownerid) return;
+		if(args[0] == undefined) return;
+		if(args[1] == undefined) return;
+		changeUserHP(args[0], args[1]);
+	}
+
+	else if(command === "xp")
+	{
+		if(message.author.id != config.ownerid) return;
+		if(args[0] == undefined) return;
+		if(args[1] == undefined) return;
+		changeUserXP(args[0], args[1]);
+	}
+
+	else if(command === "lvl")
+	{
+		if(message.author.id != config.ownerid) return;
+		if(args[0] == undefined) return;
+		if(args[1] == undefined) return;
+		changeUserLevel(args[0], args[1]);
+	}
+
+	else if(command === "gold")
+	{
+		if(message.author.id != config.ownerid) return;
+		if(args[0] == undefined) return;
+		if(args[1] == undefined) return;
+		changeUserGold(args[0], args[1]);
+	}
+
 });
 
 //Run when someone joins
